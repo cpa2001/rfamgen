@@ -25,17 +25,24 @@ def helper_sampling_CMVAE(params):
 def sampling_CMVAE(model, cm_deriv_dict, Z_DIM, SAMPLE_SIZE_Z):
 
     dist = Normal(torch.tensor([0.0]*Z_DIM), torch.tensor([1.0]*Z_DIM))
-    z_sampled = [dist.sample() for i in range(SAMPLE_SIZE_Z)]
-    seq_sampled = []
+    # z_sampled = [dist.sample() for i in range(SAMPLE_SIZE_Z)]
+    seq_sampled = set()
     trsp_sampled = []
-    for i in range(SAMPLE_SIZE_Z):
+    i = 0
+    # for i in range(SAMPLE_SIZE_Z):
+    while len(seq_sampled) < SAMPLE_SIZE_Z:
         # if i%10 == 0: 
-        print(i)
-        z = z_sampled[i].to(model.device)
+        # print(i)
+        # z = z_sampled[i].to(model.device)
+        z = dist.sample().to(model.device)
         tr, s, p = model.decoder(z.unsqueeze(dim = 0))
         trsp_sampled.append([cm_deriv_dict, tr.detach().cpu(), s.detach().cpu(), p.detach().cpu()])
+        seq_sampled.add(helper_sampling_CMVAE(trsp_sampled[i]))
+        print("length of seq_sampled: ", len(seq_sampled), "total sampling times: ", i)
+        i+=1
     
-    seq_sampled = [helper_sampling_CMVAE(param) for param in trsp_sampled]
+    print("total sampling times: ", i)
+    # seq_sampled = [helper_sampling_CMVAE(param) for param in trsp_sampled]
     return seq_sampled
 
 

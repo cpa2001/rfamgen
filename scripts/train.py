@@ -108,15 +108,19 @@ if __name__ == "__main__":
         path = os.path.join(args.data_dir, args.X_train),
         weight_path = os.path.join(args.data_dir, args.w_train) if args.w_train != "" else ""
         )
-    train_dataloader = DataLoader(train_dataset, batch_size = args.batch_size, shuffle = True, num_workers = 4, drop_last = True)
+    # train_dataloader = DataLoader(train_dataset, batch_size = args.batch_size, shuffle = True, num_workers = 4, drop_last = True)
+    train_dataloader = DataLoader(train_dataset, batch_size = args.batch_size, shuffle = True, num_workers = 4, drop_last = False)
+    print("len(train_dataloader): ", len(train_dataloader))
 
     if not args.only_training:
         valid_dataset = MyDataset(
             path = os.path.join(args.data_dir, args.X_valid),
             weight_path = os.path.join(args.data_dir, args.w_valid) if args.w_valid != "" else ""
             )
+        # valid_dataloader = DataLoader(valid_dataset, batch_size = args.batch_size, shuffle = True, num_workers = 4, drop_last = True)
         valid_dataloader = DataLoader(valid_dataset, batch_size = args.batch_size, shuffle = True, num_workers = 4, drop_last = True)
-
+        print("len(valid_dataloader): ", len(valid_dataloader))
+        
     TR_LEN = train_dataset.data["tr"].shape[-2]
     S_LEN = train_dataset.data["s"].shape[-2]
     P_LEN = train_dataset.data["p"].shape[-2]
